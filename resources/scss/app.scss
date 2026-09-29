@@ -1,0 +1,1692 @@
+// ============================================================
+// Iconors — application stylesheet
+//
+//   1. tokens        (raw brand values)
+//   2. bs overrides  (map brand onto Bootstrap)
+//   3. bootstrap
+//   4. components    (custom Iconors styling)
+//
+// Bootstrap supplies grid + component skeleton; every major surface
+// is restyled on top of it (brief §3).
+// ============================================================
+
+@use 'sass:map';
+@import 'tokens';
+
+// --- 2. Map the brand onto Bootstrap -------------------------
+$primary:   $ico-primary;
+$secondary: $ico-secondary;
+$success:   $ico-success;
+$warning:   $ico-warning;
+$danger:    $ico-error;
+$info:      $ico-accent;
+$dark:      $ico-heading;
+$light:     $ico-background;
+
+$body-color:     $ico-body;
+$body-bg:        $ico-background;
+$headings-color: $ico-heading;
+$border-color:   $ico-border;
+$link-color:     $ico-accent;
+
+$font-family-sans-serif: var(--ico-font-body);
+$headings-font-weight:   700;
+$headings-line-height:   1.15;
+
+$border-radius:    14px;
+$border-radius-sm: 9px;
+$border-radius-lg: 20px;
+$border-radius-xl: 28px;
+
+// Bootstrap 5.3 resolves button text via color-contrast(). The mint is
+// light (luminance .70) so it correctly picks dark text — the pairing
+// docs/BRAND.md requires. Raising this would flip it to unreadable white.
+$min-contrast-ratio: 4.5;
+
+// Bootstrap's default .text-muted resolves to rgba(...,.75) which, on our
+// near-white background, lands around 3:1 — it reads as "disabled", not
+// "secondary", and was the single biggest cause of the washed-out look.
+// Pinned to a real, measured colour instead.
+$secondary-color: $ico-muted;
+
+$enable-negative-margins: true;
+$enable-cssgrid: true;
+
+// --- 3. Bootstrap --------------------------------------------
+@import 'bootstrap/scss/bootstrap';
+
+// ============================================================
+// 4. Iconors
+// All colour references go through var(--ico-*) so runtime admin
+// overrides apply without a rebuild.
+// ============================================================
+
+body {
+  background: var(--ico-background);
+  color: var(--ico-body);
+  font-family: var(--ico-font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--ico-heading);
+  font-family: var(--ico-font-heading);
+  letter-spacing: -0.022em;
+}
+
+a { color: var(--ico-link); text-decoration: none; transition: color .15s ease; }
+a:hover { color: var(--ico-primary-darker); }
+
+// Bootstrap deprecated .text-muted in 5.3 but our markup (and habit) still
+// uses it. Force both aliases onto the measured 4.6:1 colour.
+.text-muted,
+.text-body-secondary { color: var(--ico-muted) !important; }
+
+.skip-link {
+  position: absolute; left: -9999px; top: 0; z-index: 1080;
+  padding: .75rem 1.25rem;
+  background: var(--ico-heading); color: #fff;
+  border-radius: 0 0 var(--ico-radius-sm) 0;
+  &:focus { left: 0; color: #fff; }
+}
+
+:focus-visible {
+  outline: 3px solid var(--ico-accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.container-ico {
+  max-width: var(--ico-container);
+  margin-inline: auto;
+  padding-inline: clamp(1rem, 4vw, 2rem);
+}
+
+// Consistent vertical rhythm. Sections were previously spaced ad-hoc,
+// which is why the page read as an undifferentiated stack.
+.section { padding-block: clamp(2.5rem, 5vw, 4rem); }
+.section--tight { padding-block: clamp(1.5rem, 3vw, 2.25rem); }
+
+.section-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+
+  h2 { font-size: clamp(1.25rem, 2.2vw, 1.6rem); margin: 0; font-weight: 750; }
+  p  { margin: .25rem 0 0; font-size: .9375rem; color: var(--ico-muted); }
+
+  &__link {
+    flex-shrink: 0;
+    font-size: .875rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: .25rem;
+
+    i { transition: transform .2s ease; }
+    &:hover i { transform: translateX(3px); }
+  }
+}
+
+// --- Buttons --------------------------------------------------
+.btn {
+  --bs-btn-focus-box-shadow: none;
+  font-weight: 600;
+  border-radius: var(--ico-radius-sm);
+  padding: .6rem 1.15rem;
+  transition: transform .16s cubic-bezier(.34,1.56,.64,1), box-shadow .16s ease, background-color .16s ease;
+}
+
+.btn-ico-primary {
+  background: var(--ico-primary);
+  color: var(--ico-on-primary);
+  border: none;
+  box-shadow: 0 1px 2px rgba(4,4,8,.08);
+
+  &:hover, &:focus {
+    background: var(--ico-primary-dark);
+    color: var(--ico-on-primary);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 22px -6px rgba(39,211,133,.55);
+  }
+  &:active { transform: translateY(0); }
+}
+
+.btn-ico-dark {
+  background: var(--ico-accent-deep);
+  color: #fff;
+  border: none;
+  &:hover, &:focus {
+    background: var(--ico-accent);
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 22px -6px rgba(90,1,240,.45);
+  }
+}
+
+.btn-ico-outline {
+  background: var(--ico-surface);
+  color: var(--ico-heading);
+  border: 1.5px solid var(--ico-border);
+  &:hover, &:focus {
+    border-color: var(--ico-primary-dark);
+    background: var(--ico-surface);
+    color: var(--ico-heading);
+    transform: translateY(-1px);
+  }
+}
+
+.btn-ico-ghost {
+  background: transparent;
+  color: var(--ico-body);
+  border: none;
+  &:hover { background: rgba(4,4,8,.05); color: var(--ico-heading); }
+}
+
+// --- Cards ----------------------------------------------------
+.ico-card {
+  background: var(--ico-surface);
+  border: 1px solid var(--ico-border);
+  border-radius: var(--ico-radius);
+  box-shadow: var(--ico-shadow-card);
+  overflow: hidden;
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+}
+
+// --- Asset tile ------------------------------------------------
+.asset-tile {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--ico-shadow-card-hover);
+    border-color: rgba(60,247,162,.6);
+  }
+
+  &__media {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    display: grid;
+    place-items: center;
+    padding: 1.25rem;
+    overflow: hidden;
+    // A LIGHT tile in BOTH themes, deliberately.
+    //
+    // Icon artwork is overwhelmingly dark-on-transparent — designed to sit
+    // on white. Rendering it on a dark surface made the whole grid look
+    // empty: black glyphs on a near-black tile. Every icon marketplace
+    // shows previews on a light swatch for exactly this reason. The card
+    // body around it still follows the theme.
+    background:
+      radial-gradient(120% 120% at 50% 0%, rgba(60,247,162,.14) 0%, transparent 62%),
+      #f2f3f7;
+  }
+
+  &__media img,
+  &__media svg {
+    max-width: 78%;
+    max-height: 78%;
+    // Fixed box so the grid never reflows as images arrive (brief §4:
+    // no layout-shifting animation).
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: transform .35s cubic-bezier(.34,1.2,.64,1);
+    filter: drop-shadow(0 6px 14px rgba(4,4,8,.10));
+  }
+
+  &:hover &__media img { transform: scale(1.07) rotate(-1.5deg); }
+
+  &__body {
+    padding: .8rem .9rem .9rem;
+    border-top: 1px solid var(--ico-border);
+    background: var(--ico-surface);
+  }
+
+  &__title {
+    font-size: .9rem;
+    font-weight: 650;
+    color: var(--ico-heading);
+    margin: 0 0 .15rem;
+    line-height: 1.35;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  &__meta {
+    font-size: .8rem;
+    color: var(--ico-muted);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .5rem;
+    margin: 0;
+  }
+
+  &__price { font-weight: 700; color: var(--ico-heading); }
+
+  &__actions {
+    position: absolute;
+    inset-inline-end: .5rem;
+    inset-block-start: .5rem;
+    display: flex;
+    gap: .35rem;
+    opacity: 0;
+    transform: translateY(-6px);
+    transition: opacity .18s ease, transform .18s ease;
+  }
+
+  &:hover &__actions,
+  &:focus-within &__actions { opacity: 1; transform: translateY(0); }
+
+  &__action {
+    width: 32px; height: 32px;
+    display: grid; place-items: center;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255,255,255,.94);
+    backdrop-filter: blur(6px);
+    color: var(--ico-heading);
+    box-shadow: 0 2px 8px rgba(4,4,8,.16);
+    font-size: .85rem;
+    transition: background .15s ease, transform .15s ease, color .15s ease;
+
+    &:hover { background: #fff; transform: scale(1.1); color: var(--ico-error); }
+  }
+}
+
+// Touch devices have no hover, so actions must be permanently visible.
+@media (hover: none) {
+  .asset-tile__actions { opacity: 1; transform: none; }
+}
+
+// --- Lottie preview ---------------------------------------------
+.ico-lottie {
+  position: relative;
+  inline-size: 78%;
+  aspect-ratio: 1 / 1;
+  display: grid;
+  place-items: center;
+
+  // The player injects an <svg> here once loaded.
+  svg { inline-size: 100% !important; block-size: 100% !important; }
+
+  // Loading placeholder only — animations autoplay, so there is no play
+  // button to show.
+  &__poster {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    transition: opacity .25s ease;
+    pointer-events: none;
+  }
+
+  &__spinner {
+    inline-size: 22px;
+    block-size: 22px;
+    border-radius: 50%;
+    border: 2px solid rgba(4, 8, 4, .12);
+    border-block-start-color: var(--ico-primary-darker);
+    animation: ico-spin .7s linear infinite;
+  }
+
+  &.is-loaded &__poster { opacity: 0; }
+
+  &.is-failed &__poster { opacity: .4; }
+  &.is-failed &__spinner { animation: none; border-block-start-color: var(--ico-muted); }
+}
+
+@keyframes ico-spin {
+  to { transform: rotate(360deg); }
+}
+
+:root[data-bs-theme='dark'] .ico-lottie__poster { color: var(--ico-primary); }
+
+// --- Badges ----------------------------------------------------
+%badge-base {
+  font-weight: 700;
+  font-size: .625rem;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  padding: .28rem .55rem;
+  border-radius: 999px;
+  line-height: 1;
+  display: inline-block;
+}
+
+.badge-premium {
+  @extend %badge-base;
+  background: var(--ico-gradient-brand);
+  color: var(--ico-heading);
+  box-shadow: 0 2px 8px rgba(90,1,240,.25);
+}
+
+.badge-free {
+  @extend %badge-base;
+  background: rgba(39,171,129,.15);
+  color: var(--ico-primary-darker);
+}
+
+// --- Header ----------------------------------------------------
+.ico-header {
+  position: sticky;
+  top: 0;
+  z-index: 1030;
+  background: rgba(255,255,255,.86);
+  backdrop-filter: saturate(180%) blur(16px);
+  border-bottom: 1px solid transparent;
+  transition: border-color .25s ease, box-shadow .25s ease;
+
+  &.is-scrolled {
+    border-bottom-color: var(--ico-border);
+    box-shadow: 0 6px 24px -12px rgba(4,4,8,.18);
+  }
+
+  // Explicit three-column grid. The previous flex layout let the nav and
+  // search compete for the same space, which is why items wrapped onto
+  // two lines and the bar looked broken.
+  &__inner {
+    display: grid;
+    grid-template-columns: auto minmax(0,1fr) auto;
+    align-items: center;
+    gap: 1rem;
+    min-height: 68px;
+  }
+}
+
+:root[data-bs-theme='dark'] .ico-header { background: rgba(21,14,32,.86); }
+
+.ico-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: .55rem;
+  font-weight: 800;
+  font-size: 1.2rem;
+  color: var(--ico-heading);
+  letter-spacing: -.03em;
+  white-space: nowrap;
+
+  &:hover { color: var(--ico-heading); }
+
+  &__mark {
+    width: 34px; height: 34px;
+    border-radius: 10px;
+    // White knockout mark needs the dark ground — 18.4:1. On the mint it
+    // would be 1.4:1 and invisible.
+    background: var(--ico-gradient-signature);
+    display: grid; place-items: center;
+    color: #fff;
+    box-shadow: 0 3px 10px -2px rgba(30,0,70,.45);
+    flex-shrink: 0;
+  }
+}
+
+.ico-nav {
+  display: flex;
+  align-items: center;
+  gap: .1rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  a {
+    display: block;
+    padding: .45rem .7rem;
+    border-radius: var(--ico-radius-sm);
+    font-size: .875rem;
+    font-weight: 550;
+    color: var(--ico-body);
+    white-space: nowrap;
+
+    &:hover { background: rgba(4,4,8,.05); color: var(--ico-heading); }
+    &[aria-current='page'] { color: var(--ico-heading); font-weight: 650; }
+  }
+}
+
+// --- Search ----------------------------------------------------
+.ico-search {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  background: var(--ico-surface);
+  border: 1.5px solid var(--ico-border);
+  border-radius: 999px;
+  padding: .3rem .3rem .3rem 1rem;
+  transition: border-color .18s ease, box-shadow .18s ease;
+  min-width: 0;
+
+  &:focus-within {
+    border-color: var(--ico-primary-dark);
+    box-shadow: 0 0 0 4px rgba(60,247,162,.20);
+  }
+
+  > i { color: var(--ico-muted); flex-shrink: 0; }
+
+  input {
+    flex: 1 1 auto;
+    min-width: 0;
+    border: 0; outline: 0;
+    background: transparent;
+    color: var(--ico-heading);
+    font-size: .9rem;
+    padding-block: .3rem;
+
+    &::placeholder { color: var(--ico-muted); }
+  }
+
+  kbd {
+    background: var(--ico-background);
+    border: 1px solid var(--ico-border);
+    border-radius: 6px;
+    color: var(--ico-muted);
+    font-size: .68rem;
+    font-family: inherit;
+    padding: .18rem .4rem;
+    flex-shrink: 0;
+  }
+
+  .btn { flex-shrink: 0; border-radius: 999px; }
+
+  &--lg {
+    padding: .45rem .45rem .45rem 1.35rem;
+    box-shadow: 0 12px 40px -16px rgba(4,4,8,.28);
+    input { font-size: 1rem; padding-block: .5rem; }
+  }
+}
+
+.ico-suggestion {
+  color: var(--ico-body);
+  border-bottom: 1px solid var(--ico-border);
+  &:last-child { border-bottom: none; }
+  &:hover { background: var(--ico-background); color: var(--ico-heading); }
+}
+
+// --- Hero ------------------------------------------------------
+.ico-hero {
+  position: relative;
+  padding-block: clamp(3rem, 7vw, 5.5rem);
+  overflow: hidden;
+  isolation: isolate;
+
+  &__label {
+    display: inline-block;
+    font-size: .7rem;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--ico-primary-darker);
+    background: rgba(39,171,129,.13);
+    padding: .4rem .85rem;
+    border-radius: 999px;
+  }
+
+  &__title {
+    font-size: clamp(2.2rem, 5.6vw, 4.1rem);
+    font-weight: 820;
+    line-height: 1.04;
+    letter-spacing: -.038em;
+    margin-block: 1.1rem .9rem;
+  }
+
+  &__gradient-text {
+    background: var(--ico-gradient-brand);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  &__lead {
+    font-size: clamp(1rem, 1.6vw, 1.15rem);
+    // Deliberately NOT .text-muted — the hero subheading is primary
+    // content and needs full body contrast.
+    color: var(--ico-body);
+    max-width: 54ch;
+    margin-inline: auto;
+  }
+
+  &__blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: .34;
+    pointer-events: none;
+    z-index: -1;
+    will-change: transform;
+  }
+}
+
+.ico-stats {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(1.5rem, 5vw, 3.5rem);
+
+  &__value {
+    font-size: clamp(1.4rem, 2.6vw, 1.9rem);
+    font-weight: 800;
+    color: var(--ico-heading);
+    line-height: 1;
+  }
+
+  &__label {
+    font-size: .8rem;
+    color: var(--ico-muted);
+    margin-top: .3rem;
+    letter-spacing: .01em;
+  }
+}
+
+// --- Hero floating assets --------------------------------------------
+// Real catalogue tiles drifting behind the headline. Purely decorative,
+// so they are aria-hidden and disappear entirely under reduced-motion.
+.hero-float {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  overflow: hidden;
+
+  &__item {
+    position: absolute;
+    inline-size: clamp(52px, 6vw, 84px);
+    aspect-ratio: 1;
+    border-radius: 18px;
+    display: grid;
+    place-items: center;
+    padding: .8rem;
+    // Light tile: icon artwork is drawn for white grounds.
+    background: #f2f3f7;
+    box-shadow: 0 18px 40px -18px rgba(4, 4, 8, .8);
+    opacity: .92;
+    animation: ico-drift 9s ease-in-out infinite;
+    will-change: transform;
+
+    img { inline-size: 100%; block-size: 100%; object-fit: contain; }
+  }
+
+  // Staggered so they never move in lockstep.
+  &__item:nth-child(1) { top: 14%; left: 5%;  animation-delay: 0s;    transform: rotate(-8deg); }
+  &__item:nth-child(2) { top: 60%; left: 11%; animation-delay: -1.6s; transform: rotate(6deg); }
+  &__item:nth-child(3) { top: 24%; right: 7%; animation-delay: -3.1s; transform: rotate(9deg); }
+  &__item:nth-child(4) { top: 68%; right: 12%;animation-delay: -4.4s; transform: rotate(-5deg); }
+  &__item:nth-child(5) { top: 42%; left: 2%;  animation-delay: -2.2s; transform: rotate(4deg); }
+  &__item:nth-child(6) { top: 8%;  right: 22%;animation-delay: -5.5s; transform: rotate(-11deg); }
+
+  @media (max-width: 991.98px) { display: none; }
+}
+
+@keyframes ico-drift {
+  0%, 100% { translate: 0 0; }
+  50%      { translate: 0 -18px; }
+}
+
+// --- Infinite marquee -------------------------------------------------
+// Brief §7. CSS-only: no JS, no library, and it costs one compositor
+// layer rather than a per-frame callback.
+.marquee {
+  position: relative;
+  overflow: hidden;
+  padding-block: .5rem;
+
+  // Fades the ends so items enter and leave rather than being clipped.
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+
+  &__track {
+    display: flex;
+    gap: 1rem;
+    inline-size: max-content;
+    animation: ico-marquee 46s linear infinite;
+    will-change: transform;
+  }
+
+  &:hover &__track { animation-play-state: paused; }
+
+  &--reverse &__track { animation-direction: reverse; animation-duration: 58s; }
+
+  // Text pill. Reads as a navigable tag rather than decoration.
+  &__pill {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    padding: .55rem 1rem;
+    border-radius: 999px;
+    background: var(--ico-surface);
+    border: 1px solid var(--ico-border);
+    color: var(--ico-body);
+    font-size: .9rem;
+    font-weight: 550;
+    white-space: nowrap;
+    text-decoration: none;
+    transition: transform .22s ease, border-color .22s ease, color .22s ease, background .22s ease;
+
+    i { font-size: .95rem; color: var(--ico-primary-darker); }
+
+    &:hover,
+    &:focus-visible {
+      transform: translateY(-3px);
+      border-color: var(--ico-primary);
+      background: rgba(60, 247, 162, .1);
+      color: var(--ico-heading);
+    }
+  }
+
+  &__count {
+    font-size: .72rem;
+    font-weight: 700;
+    color: var(--ico-muted);
+    background: var(--ico-background);
+    padding: .1rem .4rem;
+    border-radius: 999px;
+  }
+}
+
+:root[data-bs-theme='dark'] .marquee {
+  &__pill {
+    background: rgba(255, 255, 255, .05);
+    border-color: rgba(255, 255, 255, .1);
+
+    i { color: var(--ico-primary); }
+    &:hover, &:focus-visible { background: rgba(60, 247, 162, .12); }
+  }
+
+  &__count { background: rgba(255, 255, 255, .07); }
+}
+
+@keyframes ico-marquee {
+  from { transform: translate3d(0, 0, 0); }
+  // -50% because the track holds the item list twice; at the halfway
+  // point the second copy is exactly where the first began, so the loop
+  // is seamless rather than snapping back.
+  to   { transform: translate3d(-50%, 0, 0); }
+}
+
+// --- Swiper carousel --------------------------------------------------
+.ico-swiper {
+  position: relative;
+  padding-block-end: 2.5rem;
+
+  .swiper-slide { block-size: auto; }
+
+  .swiper-button-prev,
+  .swiper-button-next {
+    inline-size: 38px;
+    block-size: 38px;
+    border-radius: 50%;
+    background: var(--ico-surface);
+    border: 1px solid var(--ico-border);
+    color: var(--ico-heading);
+    box-shadow: var(--ico-shadow-card);
+    transition: transform .18s ease, background .18s ease;
+
+    &::after { font-size: .85rem; font-weight: 700; }
+    &:hover { transform: scale(1.08); background: var(--ico-primary); color: var(--ico-on-primary); }
+    &.swiper-button-disabled { opacity: .35; }
+  }
+
+  .swiper-pagination {
+    inset-block-end: 0;
+
+    &-bullet {
+      background: var(--ico-muted);
+      opacity: .4;
+      transition: inline-size .25s ease, opacity .25s ease;
+    }
+
+    // The active bullet widens as well as brightening, so position is
+    // not conveyed by colour alone.
+    &-bullet-active { background: var(--ico-primary); opacity: 1; inline-size: 22px; border-radius: 4px; }
+  }
+}
+
+// --- Magnetic / interactive buttons -----------------------------------
+.btn-magnetic {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+
+  // Sheen sweep on hover.
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,.55) 50%, transparent 70%);
+    translate: -120% 0;
+    transition: translate .6s ease;
+    z-index: -1;
+  }
+
+  &:hover::before { translate: 120% 0; }
+}
+
+// --- Type / category tiles --------------------------------------
+.type-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .5rem;
+  padding: 1.15rem .75rem;
+  text-align: center;
+  height: 100%;
+
+  &:hover {
+    transform: translateY(-3px);
+    border-color: rgba(60,247,162,.65);
+    box-shadow: var(--ico-shadow-card-hover);
+  }
+
+  &__icon {
+    width: 44px; height: 44px;
+    border-radius: 13px;
+    display: grid; place-items: center;
+    font-size: 1.2rem;
+    background: rgba(60,247,162,.14);
+    color: var(--ico-primary-darker);
+    transition: background .2s ease, transform .2s ease;
+  }
+
+  &:hover &__icon { background: var(--ico-primary); color: var(--ico-on-primary); transform: scale(1.06); }
+
+  &__label { font-size: .84rem; font-weight: 650; color: var(--ico-heading); line-height: 1.3; }
+}
+
+.category-tile {
+  display: block;
+  padding: .95rem 1.05rem;
+  height: 100%;
+
+  &:hover {
+    transform: translateY(-3px);
+    border-color: rgba(90,1,240,.45);
+    box-shadow: var(--ico-shadow-card-hover);
+  }
+
+  &__name  { font-size: .9rem; font-weight: 650; color: var(--ico-heading); }
+  &__count { font-size: .78rem; color: var(--ico-muted); margin-top: .1rem; }
+}
+
+.contributor-tile {
+  padding: 1.15rem .75rem;
+  text-align: center;
+  height: 100%;
+
+  &:hover { transform: translateY(-3px); box-shadow: var(--ico-shadow-card-hover); }
+
+  &__avatar {
+    width: 54px; height: 54px;
+    border-radius: 50%;
+    margin: 0 auto .6rem;
+    display: grid; place-items: center;
+    background: var(--ico-gradient-signature);
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.15rem;
+    box-shadow: 0 4px 14px -4px rgba(30,0,70,.5);
+  }
+
+  &__name  { font-size: .86rem; font-weight: 650; color: var(--ico-heading); }
+  &__count { font-size: .76rem; color: var(--ico-muted); }
+}
+
+// --- CTA panel ---------------------------------------------------
+.ico-cta {
+  position: relative;
+  border-radius: var(--ico-radius-lg);
+  padding: clamp(2rem, 5vw, 3.25rem);
+  text-align: center;
+  overflow: hidden;
+  background: var(--ico-gradient-signature);
+
+  // Subtle mesh so the panel is not a flat rectangle of purple.
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(60% 80% at 12% 0%,  rgba(60,247,162,.30) 0%, transparent 60%),
+      radial-gradient(50% 70% at 88% 100%, rgba(90,1,240,.45)  0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  > * { position: relative; }
+
+  h2 { color: #fff; font-size: clamp(1.4rem, 3vw, 2rem); }
+  p  { color: rgba(255,255,255,.82); margin-bottom: 1.5rem; }
+}
+
+// --- Footer -------------------------------------------------------
+.ico-footer {
+  background: var(--ico-surface);
+  border-top: 1px solid var(--ico-border);
+  padding-block: clamp(2.5rem, 5vw, 3.5rem) 1.75rem;
+
+  h2 {
+    font-size: .78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    color: var(--ico-heading);
+    margin-bottom: .9rem;
+  }
+
+  // Footer links were rendering as .text-muted at ~3:1. Links are
+  // interactive and must clear AA.
+  a, span.footer-item {
+    display: inline-block;
+    font-size: .875rem;
+    color: var(--ico-muted);
+    padding-block: .22rem;
+    &:hover { color: var(--ico-primary-darker); }
+  }
+}
+
+// --- Filters ------------------------------------------------------
+.filter-card {
+  padding: 1.1rem;
+  margin-bottom: 1rem;
+
+  h2 { font-size: .8rem; text-transform: uppercase; letter-spacing: .06em; margin-bottom: .8rem; }
+
+  .filter-link {
+    display: block;
+    font-size: .875rem;
+    color: var(--ico-muted);
+    padding: .25rem .45rem;
+    border-radius: 7px;
+
+    &:hover { background: var(--ico-background); color: var(--ico-heading); }
+    &.is-active {
+      background: rgba(60,247,162,.15);
+      color: var(--ico-heading);
+      font-weight: 650;
+    }
+  }
+}
+
+// --- Form controls -------------------------------------------------
+// A native colour input has no intrinsic width, so in a flex context it
+// collapses to a sliver.
+//
+// The `.input-group >` selector is not redundant: Bootstrap ships
+// `.input-group > .form-control { flex: 1 1 auto; width: 1% }` at (0,2,0),
+// which outranks a bare `input[type='color']` at (0,1,1) and squashed the
+// swatch to 10px wide. Matching its specificity is what actually fixes it.
+.input-group > input[type='color'],
+.color-field > input[type='color'],
+input[type='color'] {
+  inline-size: 48px;
+  min-inline-size: 48px;
+  block-size: 42px;
+  padding: 4px;
+  border: 1.5px solid var(--ico-border);
+  border-radius: var(--ico-radius-sm);
+  background: var(--ico-surface);
+  cursor: pointer;
+  flex: 0 0 auto;
+
+  &::-webkit-color-swatch-wrapper { padding: 0; }
+  &::-webkit-color-swatch { border: none; border-radius: 5px; }
+  &::-moz-color-swatch { border: none; border-radius: 5px; }
+}
+
+.color-field {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+
+  .form-control { flex: 1 1 auto; min-inline-size: 0; font-family: ui-monospace, monospace; }
+}
+
+// --- Long-form prose ------------------------------------------------
+// Admin-authored HTML arrives with bare tags and no classes, so the
+// styling has to come from the container.
+.prose {
+  // ~72 characters. Wider than this and the eye loses the line return;
+  // much narrower and a document page looks stranded in its container.
+  max-inline-size: 72ch;
+  color: var(--ico-body);
+  font-size: 1.0625rem;
+  line-height: 1.75;
+
+  > :first-child { margin-block-start: 0; }
+  > :last-child  { margin-block-end: 0; }
+
+  p { margin-block: 0 1.25rem; }
+
+  .lead {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    color: var(--ico-heading);
+    font-weight: 500;
+    margin-block-end: 1.75rem;
+  }
+
+  h2 {
+    font-size: 1.4rem;
+    font-weight: 750;
+    margin-block: 2.5rem 0.85rem;
+    // Anchor offset so a jumped-to heading is not hidden behind the
+    // sticky header.
+    scroll-margin-block-start: 96px;
+  }
+
+  h3 {
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin-block: 1.75rem 0.6rem;
+    scroll-margin-block-start: 96px;
+  }
+
+  ul, ol { margin-block: 0 1.25rem; padding-inline-start: 1.35rem; }
+  li { margin-block-end: .55rem; }
+  li::marker { color: var(--ico-primary-darker); }
+
+  strong { color: var(--ico-heading); font-weight: 650; }
+
+  a { text-decoration: underline; text-underline-offset: 2px; }
+
+  blockquote {
+    margin: 1.75rem 0;
+    padding: 1rem 1.25rem;
+    border-inline-start: 3px solid var(--ico-primary);
+    background: rgba(60, 247, 162, .07);
+    border-radius: 0 var(--ico-radius-sm) var(--ico-radius-sm) 0;
+    font-style: italic;
+  }
+
+  hr { margin-block: 2.25rem; border-color: var(--ico-border); opacity: 1; }
+
+  code {
+    background: rgba(90, 1, 240, .12);
+    color: var(--ico-link);
+    padding: .12em .4em;
+    border-radius: 5px;
+    font-size: .9em;
+  }
+}
+
+// --- Split content/media section -------------------------------------
+// Prose on one side, imagery on the other. Solves the "text stranded in
+// half a card with dead space beside it" problem by giving that space a
+// job instead of shrinking the container.
+.split {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(1.75rem, 4vw, 3.5rem);
+  align-items: center;
+
+  @media (min-width: 992px) {
+    grid-template-columns: 1fr 1fr;
+
+    // Lets a section alternate sides down the page.
+    &--reverse .split__media { order: -1; }
+  }
+
+  &__body { min-inline-size: 0; }
+
+  &__media {
+    position: relative;
+    border-radius: var(--ico-radius-lg);
+    overflow: hidden;
+    box-shadow: 0 24px 60px -28px rgba(4, 4, 8, .75);
+    // Reserves the box before the image decodes, so nothing jumps.
+    aspect-ratio: 4 / 3;
+    background: var(--ico-surface);
+
+    img {
+      inline-size: 100%;
+      block-size: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform .7s cubic-bezier(.22, 1, .36, 1);
+      will-change: transform;
+    }
+
+    &:hover img { transform: scale(1.05); }
+
+    // Brand wash so a stock photo reads as part of the product rather
+    // than something dropped in from elsewhere.
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(140deg, rgba(30, 0, 70, .55) 0%, transparent 45%),
+        linear-gradient(320deg, rgba(60, 247, 162, .28) 0%, transparent 55%);
+      pointer-events: none;
+      mix-blend-mode: multiply;
+    }
+  }
+
+  // Floating stat chip over the image.
+  &__chip {
+    position: absolute;
+    inset-block-end: 1rem;
+    inset-inline-start: 1rem;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    padding: .7rem .95rem;
+    border-radius: var(--ico-radius);
+    background: rgba(255, 255, 255, .93);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 10px 30px -12px rgba(4, 4, 8, .6);
+
+    &-value { font-size: 1.15rem; font-weight: 800; color: #040408; line-height: 1; }
+    &-label { font-size: .72rem; color: #5b6070; }
+    &-icon {
+      inline-size: 34px; block-size: 34px;
+      border-radius: 10px;
+      display: grid; place-items: center;
+      background: var(--ico-primary);
+      color: #040408;
+      font-size: .95rem;
+    }
+  }
+}
+
+// Numbered process steps.
+.step-list {
+  counter-reset: step;
+  display: grid;
+  gap: 1rem;
+
+  &__item {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    counter-increment: step;
+
+    &::before {
+      content: counter(step, decimal-leading-zero);
+      flex: 0 0 auto;
+      inline-size: 38px; block-size: 38px;
+      display: grid; place-items: center;
+      border-radius: 11px;
+      background: rgba(60, 247, 162, .15);
+      color: var(--ico-primary-darker);
+      font-weight: 800;
+      font-size: .82rem;
+    }
+  }
+
+  &__title { font-weight: 650; color: var(--ico-heading); margin-block-end: .15rem; }
+  &__text  { font-size: .9rem; color: var(--ico-muted); margin: 0; }
+}
+
+:root[data-bs-theme='dark'] .step-list__item::before { color: var(--ico-primary); }
+
+// Sticky in-page navigation for long documents.
+.toc {
+  position: sticky;
+  inset-block-start: 96px;
+
+  &__title {
+    font-size: .72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--ico-muted);
+    margin-block-end: .75rem;
+  }
+
+  &__link {
+    display: block;
+    font-size: .875rem;
+    color: var(--ico-muted);
+    padding: .35rem .6rem;
+    border-inline-start: 2px solid var(--ico-border);
+    line-height: 1.4;
+
+    &:hover { color: var(--ico-heading); border-inline-start-color: var(--ico-primary); }
+
+    // Marked with a bar as well as colour, so the active item is not
+    // conveyed by hue alone.
+    &.is-active {
+      color: var(--ico-heading);
+      font-weight: 650;
+      border-inline-start-color: var(--ico-primary);
+      background: rgba(60, 247, 162, .08);
+    }
+  }
+}
+
+// Decorative asset strip — uses assets from our own catalogue rather
+// than external stock, so there is no third-party licence question and
+// the page looks like the product it belongs to.
+.asset-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .75rem;
+  justify-content: center;
+
+  &__item {
+    inline-size: 72px;
+    block-size: 72px;
+    display: grid;
+    place-items: center;
+    padding: .85rem;
+    border-radius: var(--ico-radius-sm);
+    background: #eceef4;
+    box-shadow: var(--ico-shadow-card);
+    transition: transform .2s ease;
+
+    img { inline-size: 100%; block-size: 100%; object-fit: contain; }
+    &:hover { transform: translateY(-4px) rotate(-3deg); }
+  }
+}
+
+// --- Pagination ----------------------------------------------------
+.pagination {
+  --bs-pagination-color: var(--ico-body);
+  --bs-pagination-bg: var(--ico-surface);
+  --bs-pagination-border-color: var(--ico-border);
+  --bs-pagination-hover-color: var(--ico-heading);
+  --bs-pagination-hover-bg: var(--ico-background);
+  --bs-pagination-hover-border-color: var(--ico-border);
+  --bs-pagination-focus-box-shadow: 0 0 0 .2rem rgba(60,247,162,.2);
+  --bs-pagination-active-bg: var(--ico-primary);
+  --bs-pagination-active-border-color: var(--ico-primary);
+  --bs-pagination-active-color: var(--ico-on-primary);
+  --bs-pagination-disabled-color: var(--ico-muted);
+  --bs-pagination-disabled-bg: transparent;
+  --bs-pagination-disabled-border-color: var(--ico-border);
+  --bs-pagination-border-radius: var(--ico-radius-sm);
+  gap: .25rem;
+
+  .page-link { font-weight: 600; font-size: .875rem; }
+}
+
+:root[data-bs-theme='dark'] .pagination {
+  --bs-pagination-bg: rgba(255,255,255,.05);
+  --bs-pagination-border-color: rgba(255,255,255,.11);
+  --bs-pagination-hover-bg: rgba(255,255,255,.1);
+  --bs-pagination-disabled-border-color: rgba(255,255,255,.08);
+}
+
+// --- Skeleton / states --------------------------------------------
+.skeleton {
+  background: linear-gradient(90deg, var(--ico-border) 25%, rgba(255,255,255,.6) 50%, var(--ico-border) 75%);
+  background-size: 200% 100%;
+  animation: ico-shimmer 1.4s infinite;
+  border-radius: var(--ico-radius-sm);
+}
+
+@keyframes ico-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.empty-state {
+  text-align: center;
+  padding: clamp(2.5rem, 6vw, 4rem) 1.25rem;
+
+  &__icon {
+    width: 68px; height: 68px;
+    border-radius: 19px;
+    display: grid; place-items: center;
+    margin: 0 auto 1rem;
+    background: rgba(60,247,162,.14);
+    color: var(--ico-primary-darker);
+    font-size: 1.6rem;
+  }
+}
+
+// --- Hero entrance --------------------------------------------------
+// `backwards` fill is the important part: the element's resting state is
+// fully visible, and the animation only plays *into* it. Nothing can be
+// left transparent if the script or the frame budget misbehaves.
+@keyframes ico-rise {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: none; }
+}
+
+// --- Scroll reveal -------------------------------------------------
+// Default state is VISIBLE. JS opts in to the hidden state only when it
+// is certain it can animate — so a failed script leaves content readable
+// rather than stuck at opacity 0 (brief §4).
+.reveal-init { opacity: 0; transform: translateY(18px); }
+.reveal-in {
+  opacity: 1;
+  transform: none;
+  transition: opacity .55s ease, transform .55s cubic-bezier(.22,1,.36,1);
+}
+
+// ============================================================
+// Admin dashboard chrome
+// ============================================================
+.admin-body { background: var(--ico-background); min-height: 100vh; }
+
+.admin-shell {
+  display: grid;
+  grid-template-columns: 258px minmax(0, 1fr);
+  min-height: 100vh;
+
+  @media (max-width: 991.98px) { grid-template-columns: 1fr; }
+}
+
+.admin-sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: .35rem;
+  padding: 1rem .75rem;
+  background: var(--ico-surface);
+  border-right: 1px solid var(--ico-border);
+  overflow-y: auto;
+
+  &__brand {
+    padding: .35rem .5rem 1rem;
+    font-size: 1.1rem;
+  }
+
+  &__foot {
+    margin-top: auto;
+    padding-top: .75rem;
+    border-top: 1px solid var(--ico-border);
+  }
+
+  // Off-canvas drawer below lg.
+  @media (max-width: 991.98px) {
+    position: fixed;
+    inset-block: 0;
+    inset-inline-start: 0;
+    width: 274px;
+    z-index: 1045;
+    transform: translateX(-100%);
+    transition: transform .24s cubic-bezier(.22,1,.36,1);
+    box-shadow: 0 0 60px rgba(0,0,0,.5);
+
+    &.is-open { transform: none; }
+  }
+}
+
+.admin-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1040;
+  background: rgba(4,4,8,.6);
+  backdrop-filter: blur(2px);
+  @media (min-width: 992px) { display: none; }
+}
+
+.admin-nav {
+  display: flex;
+  flex-direction: column;
+  gap: .12rem;
+
+  &__heading {
+    font-size: .68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .09em;
+    color: var(--ico-muted);
+    margin: .9rem .5rem .3rem;
+  }
+
+  &__link {
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+    padding: .55rem .65rem;
+    border-radius: var(--ico-radius-sm);
+    color: var(--ico-body);
+    font-size: .875rem;
+    font-weight: 550;
+    line-height: 1.3;
+    transition: background .15s ease, color .15s ease;
+    cursor: pointer;
+
+    i { font-size: 1rem; width: 1.15rem; text-align: center; flex-shrink: 0; opacity: .85; }
+    span:first-of-type { flex: 1; min-width: 0; }
+
+    &:hover { background: rgba(4,4,8,.05); color: var(--ico-heading); }
+
+    // The active item is marked with a mint bar + tint rather than colour
+    // alone, so it does not rely on hue perception.
+    &.is-active {
+      background: rgba(60,247,162,.14);
+      color: var(--ico-heading);
+      font-weight: 650;
+      box-shadow: inset 3px 0 0 var(--ico-primary);
+      i { opacity: 1; color: var(--ico-primary-darker); }
+    }
+  }
+
+  &__badge {
+    background: var(--ico-error);
+    color: #fff;
+    font-size: .68rem;
+    font-weight: 700;
+    min-width: 20px;
+    padding: .1rem .35rem;
+    border-radius: 999px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+}
+
+.admin-main { display: flex; flex-direction: column; min-width: 0; }
+
+.admin-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 1020;
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  padding: .85rem clamp(1rem, 3vw, 1.75rem);
+  background: color-mix(in srgb, var(--ico-background) 88%, transparent);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--ico-border);
+
+  &__title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.25;
+  }
+
+  &__subtitle {
+    font-size: .84rem;
+    color: var(--ico-muted);
+    margin: .1rem 0 0;
+  }
+}
+
+.admin-user {
+  display: flex;
+  align-items: center;
+  gap: .55rem;
+
+  &__avatar {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    display: grid; place-items: center;
+    background: var(--ico-gradient-signature);
+    color: #fff;
+    font-weight: 700;
+    font-size: .85rem;
+    flex-shrink: 0;
+  }
+
+  &__name { display: block; font-size: .84rem; font-weight: 650; color: var(--ico-heading); line-height: 1.2; }
+  &__role { display: block; font-size: .72rem; color: var(--ico-muted); line-height: 1.2; }
+}
+
+.admin-content {
+  padding: clamp(1rem, 3vw, 1.75rem);
+  flex: 1;
+}
+
+// --- Admin stat cards -------------------------------------------
+.stat-card {
+  padding: 1.1rem 1.15rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: .35rem;
+
+  &__label {
+    font-size: .78rem;
+    color: var(--ico-muted);
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+  }
+
+  &__value {
+    font-size: clamp(1.35rem, 2.4vw, 1.75rem);
+    font-weight: 800;
+    color: var(--ico-heading);
+    line-height: 1.1;
+  }
+
+  &__hint { font-size: .75rem; color: var(--ico-muted); }
+
+  &__icon {
+    width: 34px; height: 34px;
+    border-radius: 10px;
+    display: grid; place-items: center;
+    background: rgba(60,247,162,.14);
+    color: var(--ico-primary-darker);
+    font-size: .95rem;
+  }
+}
+
+// A queue with work waiting reads differently from an empty one.
+.queue-card {
+  display: flex;
+  align-items: center;
+  gap: .85rem;
+  padding: .9rem 1rem;
+  height: 100%;
+
+  &__count { font-size: 1.5rem; font-weight: 800; line-height: 1; color: var(--ico-heading); }
+  &__label { font-size: .82rem; color: var(--ico-muted); }
+
+  &.has-work {
+    border-color: rgba(230,23,75,.45);
+    .queue-card__count { color: var(--ico-error); }
+  }
+}
+
+.health-item {
+  display: flex;
+  align-items: flex-start;
+  gap: .7rem;
+  padding: .7rem 0;
+  border-bottom: 1px solid var(--ico-border);
+  &:last-child { border-bottom: none; }
+
+  &__dot {
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    margin-top: .42rem;
+    flex-shrink: 0;
+    &.is-ok   { background: var(--ico-success); }
+    &.is-warn { background: var(--ico-warning); }
+  }
+
+  &__label  { font-size: .875rem; font-weight: 600; color: var(--ico-heading); }
+  &__detail { font-size: .8rem; color: var(--ico-muted); }
+}
+
+.admin-table {
+  width: 100%;
+  font-size: .875rem;
+
+  th {
+    font-size: .72rem;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--ico-muted);
+    font-weight: 700;
+    padding: .55rem .6rem;
+    border-bottom: 1px solid var(--ico-border);
+    text-align: left;
+  }
+
+  td {
+    padding: .6rem;
+    border-bottom: 1px solid var(--ico-border);
+    color: var(--ico-body);
+    vertical-align: middle;
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tbody tr:hover td { background: rgba(4,4,8,.03); }
+}
+
+:root[data-bs-theme='dark'] {
+  .admin-sidebar { background: rgba(16, 11, 28, .92); border-right-color: rgba(255,255,255,.08); }
+  .admin-nav__link:hover { background: rgba(255,255,255,.07); }
+  .admin-nav__link.is-active i { color: var(--ico-primary); }
+  .admin-topbar { border-bottom-color: rgba(255,255,255,.08); }
+  .admin-table tbody tr:hover td { background: rgba(255,255,255,.04); }
+  .admin-table th, .admin-table td { border-bottom-color: rgba(255,255,255,.08); }
+  .health-item { border-bottom-color: rgba(255,255,255,.08); }
+  .stat-card__icon { background: rgba(60,247,162,.13); color: var(--ico-primary); }
+}
+
+// --- Dark mode -----------------------------------------------------
+// Dark is the Iconors default, so this is a first-class theme rather
+// than an inversion. The mint reads beautifully on deep purple-black
+// (the palette was built for it) — see docs/BRAND.md.
+:root[data-bs-theme='dark'] {
+  // Subtle brand wash so the page is not flat black.
+  body {
+    background:
+      radial-gradient(90% 60% at 15% -5%, rgba(90,1,240,.16) 0%, transparent 55%),
+      radial-gradient(70% 50% at 92% 4%,  rgba(60,247,162,.09) 0%, transparent 55%),
+      var(--ico-background);
+    background-attachment: fixed;
+  }
+
+  .ico-card {
+    background: rgba(28, 22, 44, .68);
+    border-color: rgba(255,255,255,.09);
+    backdrop-filter: blur(10px);
+  }
+
+  .asset-tile:hover {
+    border-color: rgba(60,247,162,.55);
+    box-shadow: 0 16px 40px -18px rgba(0,0,0,.9), 0 0 0 1px rgba(60,247,162,.14);
+  }
+
+  // Preview tiles stay light in dark mode — see the note on
+  // .asset-tile__media. Only the surround darkens.
+  .asset-tile__media {
+    background:
+      radial-gradient(120% 120% at 50% 0%, rgba(60,247,162,.16) 0%, transparent 62%),
+      #eceef4;
+  }
+  .asset-tile__media img { filter: drop-shadow(0 6px 14px rgba(4,4,8,.16)); }
+  .asset-tile__body { background: transparent; border-top-color: rgba(255,255,255,.07); }
+  .asset-tile__action { background: rgba(38,30,58,.92); color: #fff; }
+  .asset-tile__action:hover { background: #2e2447; }
+
+  .ico-header {
+    background: rgba(10, 7, 20, .72);
+    border-bottom-color: transparent;
+    &.is-scrolled {
+      border-bottom-color: rgba(255,255,255,.09);
+      box-shadow: 0 8px 30px -14px rgba(0,0,0,.85);
+    }
+  }
+
+  .ico-search {
+    background: rgba(255,255,255,.05);
+    border-color: rgba(255,255,255,.11);
+    &:focus-within {
+      background: rgba(255,255,255,.07);
+      border-color: var(--ico-primary);
+      box-shadow: 0 0 0 4px rgba(60,247,162,.15);
+    }
+    kbd { background: rgba(255,255,255,.07); border-color: rgba(255,255,255,.12); }
+  }
+
+  .ico-nav a:hover { background: rgba(255,255,255,.07); }
+  .btn-ico-ghost:hover { background: rgba(255,255,255,.08); }
+
+  .btn-ico-outline {
+    background: rgba(255,255,255,.05);
+    border-color: rgba(255,255,255,.14);
+    color: var(--ico-heading);
+    &:hover { background: rgba(255,255,255,.09); border-color: var(--ico-primary); }
+  }
+
+  .type-tile__icon    { background: rgba(60,247,162,.13); }
+  .badge-free         { background: rgba(60,247,162,.16); color: var(--ico-primary); }
+  .empty-state__icon  { background: rgba(60,247,162,.13); }
+
+  .ico-footer { background: rgba(10,7,20,.6); border-top-color: rgba(255,255,255,.08); }
+
+  .filter-link.is-active { background: rgba(60,247,162,.16); }
+
+  .ico-hero__label { background: rgba(60,247,162,.14); color: var(--ico-primary); }
+  .ico-hero__blob  { opacity: .40; }
+
+  .form-control, .form-select {
+    background-color: rgba(255,255,255,.05);
+    border-color: rgba(255,255,255,.13);
+    color: var(--ico-heading);
+    &:focus {
+      background-color: rgba(255,255,255,.07);
+      border-color: var(--ico-primary);
+      box-shadow: 0 0 0 .2rem rgba(60,247,162,.18);
+      color: var(--ico-heading);
+    }
+    &::placeholder { color: var(--ico-muted); }
+  }
+
+  // The native dropdown popup is painted by the OS using the select's
+  // COMPUTED background. rgba(255,255,255,.05) resolves against white, so
+  // the popup came out near-white and the white option text disappeared —
+  // a long timezone list rendered as an empty white sheet. Options need a
+  // SOLID colour; alpha is not honoured here.
+  .form-select,
+  .form-control {
+    option, optgroup {
+      background-color: #1a1330;
+      color: #f4f4f7;
+    }
+  }
+
+  // Native pickers (date, colour, dropdown arrow) render light-on-light
+  // unless the control declares its colour scheme.
+  .form-control, .form-select, input[type='color'] { color-scheme: dark; }
+
+  input[type='color'] {
+    background: rgba(255,255,255,.05);
+    border-color: rgba(255,255,255,.13);
+  }
+
+  .input-group-text {
+    background: rgba(255,255,255,.05);
+    border-color: rgba(255,255,255,.13);
+    color: var(--ico-muted);
+  }
+
+  .form-check-input {
+    background-color: rgba(255,255,255,.09);
+    border-color: rgba(255,255,255,.2);
+    &:checked { background-color: var(--ico-primary); border-color: var(--ico-primary); }
+    &:focus { box-shadow: 0 0 0 .2rem rgba(60,247,162,.2); }
+  }
+
+  .alert-success { background: rgba(39,171,129,.14); border-color: rgba(39,171,129,.35); color: #8ef0c6; }
+  .alert-warning { background: rgba(236,202,46,.13); border-color: rgba(236,202,46,.35); color: #f2dc86; }
+  .alert-danger  { background: rgba(230,23,75,.13);  border-color: rgba(230,23,75,.35);  color: #ff9db5; }
+  .alert-info    { background: rgba(90,1,240,.15);   border-color: rgba(90,1,240,.4);    color: #c3b0ff; }
+
+  .offcanvas, .modal-content {
+    background: #14102099;
+    backdrop-filter: blur(18px);
+    color: var(--ico-body);
+  }
+
+  .table { --bs-table-color: var(--ico-body); --bs-table-border-color: rgba(255,255,255,.09); }
+
+  .skeleton {
+    background: linear-gradient(90deg, rgba(255,255,255,.05) 25%, rgba(255,255,255,.11) 50%, rgba(255,255,255,.05) 75%);
+    background-size: 200% 100%;
+  }
+}
+
+// --- 4b. My Account area -------------------------------------
+@import 'account';

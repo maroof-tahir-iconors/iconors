@@ -1,0 +1,428 @@
+// ============================================================
+// My Account
+// ============================================================
+// The customer account area: page header + tab bar, and the tiles
+// each tab renders. Everything consumes var(--ico-*) so admin
+// branding and dark mode both flow through without extra rules.
+
+.account-head {
+  border-bottom: 1px solid var(--ico-border);
+  background: var(--ico-surface);
+
+  &__title {
+    text-align: center;
+    font-weight: 800;
+    color: var(--ico-heading);
+    font-size: clamp(1.65rem, 3.4vw, 2.25rem);
+    margin: 0;
+    padding: clamp(1.75rem, 4vw, 2.75rem) 0 1.25rem;
+  }
+}
+
+.account-tabs {
+  // Horizontal scroll rather than wrapping: six tabs will not fit on a
+  // phone, and a second row pushes the content below the fold.
+  overflow-x: auto;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar { display: none; }
+
+  ul {
+    display: flex;
+    justify-content: center;
+    gap: clamp(.75rem, 3vw, 2.5rem);
+    margin: 0;
+    padding: 0;
+    min-width: max-content;
+  }
+
+  &__link {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    padding: .35rem 0 .85rem;
+    font-size: .95rem;
+    font-weight: 500;
+    color: var(--ico-muted);
+    text-decoration: none;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: color .18s ease, border-color .18s ease;
+
+    &:hover,
+    &:focus-visible { color: var(--ico-heading); }
+
+    &.is-active {
+      color: var(--ico-heading);
+      font-weight: 700;
+      border-bottom-color: var(--ico-heading);
+    }
+  }
+
+  &__badge {
+    font-size: .6rem;
+    font-weight: 700;
+    letter-spacing: .04em;
+    padding: .15rem .4rem;
+    border-radius: 999px;
+    background: var(--ico-primary);
+    color: var(--ico-on-primary);
+    text-transform: uppercase;
+  }
+}
+
+// --- Create-collection tile -----------------------------------
+// A <button>, not a decorated <div>: it opens a modal, so it must be
+// focusable and respond to Enter/Space for free.
+.collection-new {
+  width: 100%;
+  height: 100%;
+  min-height: 240px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  padding: 1.5rem;
+  background: transparent;
+  border: 1px dashed var(--ico-border);
+  border-radius: var(--ico-radius);
+  color: var(--ico-link);
+  transition: border-color .2s ease, background .2s ease, transform .2s ease;
+
+  &:hover,
+  &:focus-visible {
+    border-color: var(--ico-primary-darker);
+    background: rgba(60, 247, 162, .07);
+    transform: translateY(-2px);
+  }
+
+  &__plus { font-size: 1.5rem; line-height: 1; }
+  &__label { font-size: .95rem; font-weight: 500; }
+}
+
+.collection-card {
+  position: relative;
+  height: 100%;
+  min-height: 240px;
+  display: flex;
+  flex-direction: column;
+
+  &:hover {
+    box-shadow: var(--ico-shadow-card-hover);
+
+    .collection-card__delete { opacity: 1; }
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--ico-border);
+    aspect-ratio: 1 / 1;
+  }
+
+  &__cell {
+    display: grid;
+    place-items: center;
+    background: var(--ico-surface);
+    overflow: hidden;
+    color: var(--ico-muted);
+
+    img { width: 100%; height: 100%; object-fit: contain; padding: 12%; }
+
+    &--empty { opacity: .55; }
+  }
+
+  &__body { padding: .75rem .9rem 1rem; }
+
+  &__name {
+    font-size: .95rem;
+    font-weight: 700;
+    color: var(--ico-heading);
+    margin: 0 0 .15rem;
+    // Long names must not push the tile out of the grid.
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__meta { font-size: .78rem; color: var(--ico-muted); margin: 0; }
+  &__dot { margin: 0 .25rem; }
+
+  // Revealed on hover, but always present for keyboard users —
+  // opacity:0 alone would make it invisible yet still tabbable, so
+  // focus-within brings it back.
+  &__delete {
+    position: absolute;
+    top: .5rem;
+    right: .5rem;
+    opacity: 0;
+    transition: opacity .18s ease;
+  }
+
+  &:focus-within &__delete { opacity: 1; }
+}
+
+.follow-card {
+  display: flex;
+  align-items: center;
+  gap: .85rem;
+  padding: 1rem;
+  height: 100%;
+
+  &__avatar {
+    flex: 0 0 auto;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: var(--ico-gradient-brand);
+    color: var(--ico-on-primary);
+    font-weight: 700;
+    overflow: hidden;
+
+    img { width: 100%; height: 100%; object-fit: cover; }
+  }
+
+  &__body { min-width: 0; flex: 1 1 auto; }
+
+  &__name {
+    font-size: .95rem;
+    font-weight: 700;
+    color: var(--ico-heading);
+    margin: 0 0 .1rem;
+    display: flex;
+    align-items: center;
+    gap: .3rem;
+  }
+
+  &__verified { color: var(--ico-primary-darker); font-size: .8rem; }
+  &__meta { font-size: .78rem; color: var(--ico-muted); margin: 0; }
+
+  &__actions {
+    display: flex;
+    flex-direction: column;
+    gap: .35rem;
+    flex: 0 0 auto;
+  }
+}
+
+// Overview tab greeting. Sits under the shared "My Account" heading, so it
+// is deliberately a step down in weight rather than a second page title.
+.account-welcome {
+  &__title {
+    font-size: clamp(1.1rem, 2vw, 1.35rem);
+    font-weight: 700;
+    color: var(--ico-heading);
+    margin: 0 0 .15rem;
+  }
+
+  &__sub {
+    font-size: .85rem;
+    color: var(--ico-muted);
+    margin: 0;
+  }
+}
+
+.download-thumb {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--ico-radius-sm);
+  border: 1px solid var(--ico-border);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  flex: 0 0 auto;
+  color: var(--ico-muted);
+
+  img { width: 100%; height: 100%; object-fit: contain; padding: 4px; }
+}
+
+.api-notice {
+  display: flex;
+  gap: .75rem;
+  padding: 1rem;
+  border-radius: var(--ico-radius-sm);
+  border: 1px solid var(--ico-border);
+  background: var(--ico-background);
+
+  > i { color: var(--ico-primary-darker); font-size: 1.1rem; line-height: 1.4; }
+}
+
+.account-plan-name {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--ico-heading);
+}
+
+.account-limit { font-size: .9rem; font-weight: 500; color: var(--ico-muted); }
+
+.account-meta {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .4rem .9rem;
+  margin: 0;
+  font-size: .85rem;
+
+  dt { color: var(--ico-muted); font-weight: 500; }
+  dd { margin: 0; color: var(--ico-heading); font-weight: 600; }
+}
+
+.plan-card {
+  padding: 1.1rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: .6rem;
+
+  &.is-current { border-color: var(--ico-primary-darker); }
+
+  &__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .5rem;
+  }
+
+  &__name { font-size: .95rem; font-weight: 700; color: var(--ico-heading); margin: 0; }
+
+  &__price {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--ico-heading);
+    margin: 0;
+  }
+
+  &__per { font-size: .8rem; font-weight: 500; color: var(--ico-muted); }
+
+  &__features {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: .3rem;
+    font-size: .8rem;
+    color: var(--ico-body);
+    flex: 1 1 auto;
+
+    i { color: var(--ico-primary-darker); margin-right: .3rem; }
+  }
+}
+
+// --- Header account dropdown ---------------------------------
+.ico-account {
+  &__trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    border-radius: 999px;
+
+    &:focus-visible {
+      outline: 2px solid var(--ico-primary-darker);
+      outline-offset: 3px;
+    }
+  }
+
+  &__avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: var(--ico-gradient-brand);
+    color: var(--ico-on-primary);
+    font-size: .8rem;
+    font-weight: 700;
+    overflow: hidden;
+
+    img { width: 100%; height: 100%; object-fit: cover; }
+
+    &--lg { width: 44px; height: 44px; font-size: .95rem; }
+  }
+
+  &__caret { font-size: .7rem; color: var(--ico-muted); }
+
+  &__menu {
+    min-width: 260px;
+    padding: .5rem;
+    border: 1px solid var(--ico-border);
+    border-radius: var(--ico-radius);
+    box-shadow: var(--ico-shadow-card-hover);
+    background: var(--ico-surface);
+
+    .dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: .65rem;
+      border-radius: var(--ico-radius-sm);
+      padding: .5rem .6rem;
+      font-size: .9rem;
+      color: var(--ico-body);
+
+      i { width: 1.1rem; text-align: center; color: var(--ico-muted); }
+
+      &:hover,
+      &:focus-visible {
+        background: var(--ico-background);
+        color: var(--ico-heading);
+
+        i { color: var(--ico-heading); }
+      }
+    }
+  }
+
+  &__identity {
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+    padding: .5rem .6rem .65rem;
+  }
+
+  &__identity-text {
+    display: grid;
+    min-width: 0;
+
+    strong {
+      font-size: .92rem;
+      color: var(--ico-heading);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    span { font-size: .78rem; color: var(--ico-muted); }
+  }
+
+  // Logout is a submit button inside a form, so it needs the width and
+  // alignment a dropdown-item anchor gets for free.
+  &__logout {
+    width: 100%;
+    background: transparent;
+    border: 0;
+    text-align: left;
+    color: var(--ico-error);
+
+    i { color: var(--ico-error); }
+
+    &:hover,
+    &:focus-visible {
+      color: var(--ico-error);
+
+      i { color: var(--ico-error); }
+    }
+  }
+}
+
+:root[data-bs-theme="dark"] {
+  .collection-new:hover,
+  .collection-new:focus-visible { background: rgba(60, 247, 162, .1); }
+
+  .api-notice { background: rgba(255, 255, 255, .03); }
+
+  .ico-account__menu { background: var(--ico-surface); }
+}

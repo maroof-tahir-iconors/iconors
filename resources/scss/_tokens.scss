@@ -1,0 +1,136 @@
+// ============================================================
+// Iconors Brand Tokens
+// Extracted from iconors.com — see docs/BRAND.md for evidence.
+//
+// These are DEFAULTS. At runtime, SettingsService emits a
+// <style> block of :root overrides from the `settings` table,
+// so admins can restyle globally without touching source.
+// Anything an admin can change must therefore be consumed as
+// var(--ico-*), never as the raw SCSS variable.
+// ============================================================
+
+// --- Source of truth: raw brand values ---------------------
+$ico-primary:          #3CF7A2; // theme-color + --primary-color on live site
+$ico-primary-light:    #2DFFB3;
+$ico-primary-dark:     #27D385;
+$ico-primary-darker:   #27AB81;
+
+$ico-secondary:        #28375A;
+$ico-secondary-dark:   #1B2440;
+$ico-secondary-light:  #3C465A;
+
+$ico-accent:           #5A01F0;
+$ico-accent-deep:      #1E0046;
+$ico-accent-deep-alt:  #1E0064;
+
+$ico-heading:          #040408; // --primary-text-color on live site
+$ico-body:             #28375A;
+$ico-muted:            #717179;
+$ico-border:           #E9EDF7;
+
+$ico-surface:          #FFFFFF;
+$ico-background:       #FAF9FB;
+$ico-dark-background:  #070518;
+$ico-dark-surface:     #150E20;
+
+$ico-success:          #27AB81;
+$ico-warning:          #ECCA2E;
+$ico-error:            #E6174B;
+$ico-info:             #5A01F0;
+
+// --- Contrast-safe pairings --------------------------------
+// The mint is a FILL, not a text colour: #3CF7A2 on white is
+// 1.4:1 and fails WCAG AA outright. On near-black it is 14.6:1.
+// Any control filled with $ico-primary must use this for text.
+$ico-on-primary:       $ico-heading;   // 14.6:1 on mint
+$ico-on-accent:        #FFFFFF;        // 18.4:1 on #1E0046
+$ico-on-dark:          #FFFFFF;
+
+// --- Gradients ---------------------------------------------
+$ico-gradient-signature: linear-gradient(-135deg, #{$ico-accent-deep}, #{$ico-accent-deep-alt});
+$ico-gradient-brand:     linear-gradient(135deg, #{$ico-primary} 0%, #{$ico-accent} 100%);
+
+:root {
+  --ico-primary:          #{$ico-primary};
+  --ico-primary-light:    #{$ico-primary-light};
+  --ico-primary-dark:     #{$ico-primary-dark};
+  --ico-primary-darker:   #{$ico-primary-darker};
+
+  --ico-secondary:        #{$ico-secondary};
+  --ico-secondary-dark:   #{$ico-secondary-dark};
+  --ico-secondary-light:  #{$ico-secondary-light};
+
+  --ico-accent:           #{$ico-accent};
+  --ico-accent-deep:      #{$ico-accent-deep};
+  --ico-accent-deep-alt:  #{$ico-accent-deep-alt};
+
+  --ico-heading:          #{$ico-heading};
+  --ico-body:             #{$ico-body};
+  --ico-muted:            #{$ico-muted};
+  --ico-border:           #{$ico-border};
+  --ico-link:             #{$ico-accent};
+
+  --ico-surface:          #{$ico-surface};
+  --ico-background:       #{$ico-background};
+
+  --ico-success:          #{$ico-success};
+  --ico-warning:          #{$ico-warning};
+  --ico-error:            #{$ico-error};
+  --ico-info:             #{$ico-info};
+
+  --ico-on-primary:       #{$ico-on-primary};
+  --ico-on-accent:        #{$ico-on-accent};
+
+  --ico-gradient-signature: #{$ico-gradient-signature};
+  --ico-gradient-brand:     #{$ico-gradient-brand};
+
+  // Shape / typography — admin-controllable per brief §2
+  --ico-radius:           14px;
+  --ico-radius-sm:        8px;
+  --ico-radius-lg:        24px;
+  --ico-shadow-card:      0 4px 24px rgba(4, 4, 8, .07);
+  --ico-shadow-card-hover:0 12px 40px rgba(4, 4, 8, .12);
+  --ico-container:        1280px;
+  --ico-font-body:        'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --ico-font-heading:     'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+// --- Dark mode ---------------------------------------------
+// Driven by [data-bs-theme="dark"] so it composes with Bootstrap 5.3's
+// own colour-mode system rather than fighting it.
+//
+// The `:root` prefix is load-bearing, not decoration. SettingsService
+// injects the admin's branding as a `:root { ... }` block AFTER this
+// stylesheet. A bare `[data-bs-theme="dark"]` selector has the SAME
+// specificity (0,1,0) as `:root`, so the later-injected light values won
+// and dark mode silently rendered as light. `:root[data-bs-theme="dark"]`
+// is (0,2,0) and therefore beats the injected block.
+//
+// Note what is deliberately NOT overridden here: primary, accent and the
+// gradients. Those are brand identity and stay admin-controlled in both
+// themes; only the surface/text tokens flip.
+:root[data-bs-theme="dark"] {
+  --ico-heading:    #FFFFFF;
+  --ico-body:       #C7CBD9;
+  --ico-muted:      #A4A4AA;
+  --ico-border:     #29293E;
+  --ico-surface:    #{$ico-dark-surface};
+  --ico-background: #{$ico-dark-background};
+  --ico-link:       #{$ico-primary};   // mint IS legible on dark
+  --ico-shadow-card:       0 4px 24px rgba(0, 0, 0, .5);
+  --ico-shadow-card-hover: 0 12px 40px rgba(0, 0, 0, .65);
+}
+
+// --- Reduced motion (brief §4 / §36) ------------------------
+// Global kill-switch. Individual JS animation modules must also
+// check window.matchMedia('(prefers-reduced-motion: reduce)').
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
