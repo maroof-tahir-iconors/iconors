@@ -53,10 +53,10 @@
     </script>
 
     <!-- Google AdSense verification code -->
-    <script async
-        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=YOUR_ACTUAL_PUBLISHER_ID"
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5464928428866749"
         crossorigin="anonymous"></script>
 </head>
+
 
 <body>
     {{-- Brief §36: first focusable element on the page. --}}
