@@ -42,6 +42,7 @@
 
     {{-- Set colour mode before first paint to avoid a flash of the wrong
          theme. Dark is the Iconors default; a stored preference always wins. --}}
+    
     <script>
         (function () {
             try {
@@ -50,7 +51,13 @@
             } catch (e) {}
         })();
     </script>
+
+    <!-- Google AdSense verification code -->
+    <script async
+        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=YOUR_ACTUAL_PUBLISHER_ID"
+        crossorigin="anonymous"></script>
 </head>
+
 <body>
     {{-- Brief §36: first focusable element on the page. --}}
     <a class="skip-link" href="#main">Skip to main content</a>
