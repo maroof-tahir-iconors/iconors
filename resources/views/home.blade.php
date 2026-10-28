@@ -98,24 +98,6 @@
 {{-- ---------------------------------------------------------------
      Asset types
 --------------------------------------------------------------- --}}
-
-@php
-    $typeOrder = [
-        'svg-icons',
-        'illustrations',
-        'lottie-animations',
-        '3d-assets',
-    ];
-
-    $assetTypes = $assetTypes->sortBy(function ($type) use ($typeOrder) {
-        $position = array_search($type->slug, $typeOrder, true);
-
-        return $position === false
-            ? count($typeOrder)
-            : $position;
-    })->values();
-@endphp
-
                     
 @if ($settings->get('home_show_types', true) && $assetTypes->isNotEmpty())
 <section class="section--tight" data-ico-reveal>
